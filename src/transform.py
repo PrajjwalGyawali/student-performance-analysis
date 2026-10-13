@@ -121,9 +121,10 @@ def clean_and_transform_data(df_raw: pd.DataFrame) -> dict:
             return "23-25"
     df["age_group"] = df["age"].apply(assign_age_group)
     
-    # Course assignment for multi-table modeling
-    # 3 core curriculum courses distributed systematically across student cohort
-    df["course_id"] = (df["student_id"] % 3) + 101
+    # NOTE: The raw dataset contains no course metadata (no course name, department, or
+    # instructor columns). A course_id derived from student_id % 3 was previously used
+    # but it invented a relationship that does not exist in the data. It has been removed.
+    # All downstream tables work on the single-course flat structure of the raw dataset.
 
     # --- 3.4 Relational Entity Normalization ---
     # 1. Students Table
@@ -131,66 +132,38 @@ def clean_and_transform_data(df_raw: pd.DataFrame) -> dict:
         "student_id", "first_name", "last_name", "age", "age_group", "gender", "previous_gpa"
     ]].drop_duplicates(subset=["student_id"]).sort_values("student_id").reset_index(drop=True)
     
-    # 2. Courses Table
-    courses_data = [
-        {
-            "course_id": 101,
-            "course_code": "CS101",
-            "course_name": "Introduction to Computer Science",
-            "department": "Computer Science",
-            "credits": 4,
-            "instructor_name": "Dr. Alan Turing"
-        },
-        {
-            "course_id": 102,
-            "course_code": "DS201",
-            "course_name": "Data Science & Statistical Learning",
-            "department": "Data Science",
-            "credits": 3,
-            "instructor_name": "Dr. Grace Hopper"
-        },
-        {
-            "course_id": 103,
-            "course_code": "SE301",
-            "course_name": "Software Engineering Principles",
-            "department": "Software Engineering",
-            "credits": 4,
-            "instructor_name": "Dr. Margaret Hamilton"
-        }
-    ]
-    df_courses = pd.DataFrame(courses_data)
+    # NOTE: Courses table removed. The raw dataset has no course name, department,
+    # or instructor columns. The previous courses table was entirely invented data
+    # and has been dropped to maintain analytical honesty.
     
-    # 3. Attendance Records Table
+    # 2. Attendance Records Table (no fabricated course_id)
     df_attendance = df[[
-        "student_id", "course_id", "total_lectures", "lectures_attended",
+        "student_id", "total_lectures", "lectures_attended",
         "lecture_attendance_pct", "total_lab_sessions", "labs_attended",
         "lab_attendance_pct", "overall_attendance_pct", "attendance_tier"
     ]].copy().reset_index(drop=True)
     df_attendance.insert(0, "attendance_id", range(1, len(df_attendance) + 1))
     
-    # 4. Academic Assessments Table
+    # 3. Academic Assessments Table (no fabricated course_id)
     df_assessments = df[[
-        "student_id", "course_id", "quiz1_marks", "quiz2_marks", "quiz3_marks",
+        "student_id", "quiz1_marks", "quiz2_marks", "quiz3_marks",
         "avg_quiz_score", "midterm_marks", "final_marks",
         "composite_score", "letter_grade", "academic_standing", "dropout_risk"
     ]].copy().reset_index(drop=True)
     df_assessments.insert(0, "assessment_id", range(1, len(df_assessments) + 1))
     
-    # --- 3.5 Save Processed Files ---
+    # --- 3.4 Save Processed Files ---
     df_students.to_csv(os.path.join(PROCESSED_DIR, "students.csv"), index=False)
-    df_courses.to_csv(os.path.join(PROCESSED_DIR, "courses.csv"), index=False)
     df_attendance.to_csv(os.path.join(PROCESSED_DIR, "attendance_records.csv"), index=False)
     df_assessments.to_csv(os.path.join(PROCESSED_DIR, "academic_assessments.csv"), index=False)
     
-    print("\nSuccessfully transformed and saved 4 normalized relational tables:")
+    print("\nSuccessfully transformed and saved 3 normalized relational tables:")
     print(f"  1. students.csv ({df_students.shape[0]} rows, {df_students.shape[1]} cols)")
-    print(f"  2. courses.csv ({df_courses.shape[0]} rows, {df_courses.shape[1]} cols)")
-    print(f"  3. attendance_records.csv ({df_attendance.shape[0]} rows, {df_attendance.shape[1]} cols)")
-    print(f"  4. academic_assessments.csv ({df_assessments.shape[0]} rows, {df_assessments.shape[1]} cols)")
+    print(f"  2. attendance_records.csv ({df_attendance.shape[0]} rows, {df_attendance.shape[1]} cols)")
+    print(f"  3. academic_assessments.csv ({df_assessments.shape[0]} rows, {df_assessments.shape[1]} cols)")
     
     return {
         "students": df_students,
-        "courses": df_courses,
         "attendance": df_attendance,
         "assessments": df_assessments,
         "full_transformed": df

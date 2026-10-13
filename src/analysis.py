@@ -26,10 +26,9 @@ def perform_data_analysis(tables: dict, save_plots: bool = True) -> dict:
     df_attendance = tables["attendance"]
     df_assessments = tables["assessments"]
     
-    # Merge for integrated multi-table analytical slicing
+    # Merge for integrated multi-table analytical slicing (students + attendance + assessments only)
     df_merged = df_assessments.merge(df_students, on="student_id") \
-                              .merge(df_attendance, on=["student_id", "course_id"]) \
-                              .merge(df_courses, on="course_id")
+                              .merge(df_attendance, on="student_id")
     
     # -------------------------------------------------------------------------
     # Analytical Question 1: How does attendance tier impact composite scores & grades?
@@ -45,13 +44,14 @@ def perform_data_analysis(tables: dict, save_plots: bool = True) -> dict:
     print(q1_summary.to_string())
     
     # -------------------------------------------------------------------------
-    # Analytical Question 2: Performance & Dropout Risk Distribution by Department?
+    # Analytical Question 2: Dropout Risk Distribution by Gender & Age Group?
+    # (Department analysis removed: dataset has no real department/course metadata)
     # -------------------------------------------------------------------------
-    print("\n[Q2] Performance Metrics Across Academic Departments:")
-    q2_summary = df_merged.groupby(["department", "course_name"]).agg(
-        enrolled_students=("student_id", "count"),
+    print("\n[Q2] Dropout Risk and Performance by Gender:")
+    q2_summary = df_merged.groupby("gender").agg(
+        student_count=("student_id", "count"),
         avg_final_marks=("final_marks", "mean"),
-        avg_gpa=("previous_gpa", "mean"),
+        avg_composite=("composite_score", "mean"),
         high_risk_count=("dropout_risk", lambda x: (x == "High Risk").sum()),
         deans_list_count=("academic_standing", lambda x: (x == "Dean's Honor List").sum())
     ).round(2)
@@ -100,11 +100,11 @@ def perform_data_analysis(tables: dict, save_plots: bool = True) -> dict:
     deans_list_pct = (deans_list_total / total_students) * 100
     
     insights = [
-        f"1. Attendance is a primary determinant of academic standing: Students in the 'Excellent' tier achieved an average composite score of {q1_summary.loc['Excellent', 'avg_composite_score']:.1f}, compared to {q1_summary.loc['Critical', 'avg_composite_score']:.1f} for students in the 'Critical' tier.",
-        f"2. Dropout Risk Concentration: {high_risk_total} students ({high_risk_pct:.1f}% of cohort) are classified as 'High Risk', predominantly driven by overall attendance under 40% and final exam scores under 25.",
+        f"1. Students in the 'Excellent' attendance tier averaged a composite score of {q1_summary.loc['Excellent', 'avg_composite_score']:.1f}, compared to {q1_summary.loc['Critical', 'avg_composite_score']:.1f} for the 'Critical' tier. The data shows a clear difference in outcomes, though attendance alone cannot be identified as the sole cause.",
+        f"2. {high_risk_total} students ({high_risk_pct:.1f}% of cohort) are classified as 'High Risk'. This group is defined by overall attendance under 40% and final exam scores under 25 combined — both conditions must hold.",
         f"3. High-Achieving Cohort: {deans_list_total} students ({deans_list_pct:.1f}% of cohort) qualified for the Dean's Honor List, demonstrating both >=80% attendance and >=85.0 composite marks.",
-        f"4. Balanced Departmental Performance: All 3 academic departments exhibited consistent average final marks between 36.8 and 37.9, demonstrating standardized grading difficulty across sections.",
-        f"5. Lab Session Criticality: Students attending >=80% of lab sessions scored an average of {high_lab:.1f} on the final exam, representing a {((high_lab - low_lab)/low_lab)*100:.1f}% performance advantage over students with <40% lab attendance."
+        f"4. Lab Session Impact: Students attending >=80% of lab sessions scored an average of {high_lab:.1f} on the final exam, compared to {low_lab:.1f} for students with <40% lab attendance — a {high_lab - low_lab:.1f}-point observed difference.",
+        f"5. Lab vs Lecture: High lab attenders scored {high_lab:.1f} avg vs {low_lab:.1f} for low lab attenders ({((high_lab - low_lab)/low_lab)*100:.1f}% higher). High lecture attenders scored {high_lec:.1f} vs {low_lec:.1f} for low lecture attenders."
     ]
     
     print("\n" + "=" * 80)
@@ -144,15 +144,9 @@ def perform_data_analysis(tables: dict, save_plots: bool = True) -> dict:
         plt.savefig(os.path.join(VIS_DIR, "05_dropout_risk_breakdown.png"), dpi=300)
         plt.close()
         
-        # Figure 6: Department Performance Comparison
-        plt.figure(figsize=(9, 5))
-        sns.barplot(data=df_merged, x="department", y="composite_score", hue="gender", palette="Set1", errorbar=None)
-        plt.title("Average Composite Score by Department and Gender", fontsize=13, weight="bold")
-        plt.xlabel("Academic Department", fontsize=11)
-        plt.ylabel("Avg Composite Score", fontsize=11)
-        plt.tight_layout()
-        plt.savefig(os.path.join(VIS_DIR, "06_department_performance.png"), dpi=300)
-        plt.close()
+        # NOTE: 06_department_performance.png removed. The raw dataset has no real
+        # department/course metadata. Generating a department plot from fabricated
+        # course_id assignments would misrepresent the data.
 
     return {
         "insights": insights,
