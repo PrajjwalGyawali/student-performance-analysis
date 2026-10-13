@@ -1,16 +1,16 @@
-# Day 2 Documentation: Data Cleaning, Entity Normalization & Analytical Insights
+# Milestone 2 Documentation: Data Cleaning, Entity Normalization & Analytical Insights
 
 **Capstone Project:** End-to-End ETL & Academic Performance Pipeline  
-**Timeline:** Day 2 of 3  
+**Milestone:** Phase 3 & Phase 4 Engineering Documentation  
 **Phases Completed:**  
 - **Phase 3:** Data Cleaning, Transformation & Relational Entity Normalization  
 - **Phase 4:** Data Analysis, Business Questions & Insights  
 
 ---
 
-## 1. Summary of Day 2 Objectives
+## 1. Summary of Milestone 2 Objectives
 
-On Day 2, we addressed the data quality problems identified in Day 1's Exploratory Data Analysis, performed feature engineering, and split the flat raw dataset into 4 normalized relational tables. In addition, we conducted comprehensive data analysis in Python/Pandas to answer 5 core academic questions, supported by 3 new publication-quality visualizations.
+In this phase, we addressed the data quality problems identified in the Exploratory Data Analysis, performed feature engineering, and split the flat raw dataset into 4 normalized relational tables. In addition, we conducted comprehensive data analysis in Python/Pandas to answer 5 core academic questions, supported by 3 new publication-quality visualizations.
 
 ---
 
