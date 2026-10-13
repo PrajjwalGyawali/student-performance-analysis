@@ -2,6 +2,7 @@
 
 **Capstone Project:** End-to-End ETL & Academic Performance Pipeline  
 **Milestone:** Phase 3 & Phase 4 Engineering Documentation  
+**Status:** Day 2 (Milestone 2) completed; Day 3 (Milestone 3) pending.  
 **Phases Completed:**  
 - **Phase 3:** Data Cleaning, Transformation & Relational Entity Normalization  
 - **Phase 4:** Data Analysis, Business Questions & Insights  
