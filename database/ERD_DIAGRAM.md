@@ -1,67 +1,57 @@
-# Deliverable 4: Entity Relationship Diagram (ERD) & Schema Specification
+# Entity Relationship Diagram: 3-Table Schema
 
 **Project:** End-to-End ETL & Academic Performance Pipeline  
-**Database Technology:** SQLite / ANSI SQL Compliant  
-**Database File:** `database/student_performance.db`  
+**Database:** `database/student_performance.db` (SQLite)  
+**Tables:** `students`, `attendance_records`, `academic_assessments`  
+
+> **Note:** The raw Kaggle dataset contains no course, department, or instructor data.
+> The `courses` table was removed to preserve analytical honesty.
 
 ---
 
-## 1. Visual Entity Relationship Diagram (Mermaid)
+## 1. Visual ERD (Mermaid)
 
 ```mermaid
 erDiagram
-    STUDENTS ||--o{ ATTENDANCE_RECORDS : "generates (1:M)"
-    STUDENTS ||--o{ ACADEMIC_ASSESSMENTS : "evaluated_by (1:M)"
-    COURSES ||--o{ ATTENDANCE_RECORDS : "tracks (1:M)"
-    COURSES ||--o{ ACADEMIC_ASSESSMENTS : "grades (1:M)"
+    STUDENTS ||--o{ ATTENDANCE_RECORDS  : "has (1:1 in this dataset)"
+    STUDENTS ||--o{ ACADEMIC_ASSESSMENTS : "evaluated_by (1:1 in this dataset)"
 
     STUDENTS {
-        INTEGER student_id PK "Unique Student Identifier"
-        TEXT first_name "Student First Name"
-        TEXT last_name "Student Last Name"
-        INTEGER age "Student Age (16-80)"
-        TEXT age_group "Categorical Tier ('18-19', '20-22', '23-25')"
-        TEXT gender "Gender ('Male', 'Female', 'Other')"
-        REAL previous_gpa "Prior Academic Cumulative GPA (0.0-4.0)"
-    }
-
-    COURSES {
-        INTEGER course_id PK "Unique Course Identifier"
-        TEXT course_code UK "Unique Course Code (e.g. CS101, DS201)"
-        TEXT course_name "Full Descriptive Title"
-        TEXT department "Academic Faculty / Division"
-        INTEGER credits "Credit Weighting (>0)"
-        TEXT instructor_name "Lead Faculty Instructor"
+        INTEGER student_id    PK "Unique Student Identifier"
+        TEXT    first_name       "Student First Name"
+        TEXT    last_name        "Student Last Name"
+        INTEGER age              "Student Age (16-80)"
+        TEXT    age_group        "Tier: 18-19 / 20-22 / 23-25"
+        TEXT    gender           "Male / Female / Other"
+        REAL    previous_gpa     "Prior Cumulative GPA (0.0-4.0)"
     }
 
     ATTENDANCE_RECORDS {
-        INTEGER attendance_id PK "Unique Attendance Log Identifier"
-        INTEGER student_id FK "References students(student_id)"
-        INTEGER course_id FK "References courses(course_id)"
-        INTEGER total_lectures "Total Scheduled Lectures (12)"
-        INTEGER lectures_attended "Lectures Attended (0-12)"
-        REAL lecture_attendance_pct "Lecture Compliance Percentage"
-        INTEGER total_lab_sessions "Total Lab Practicals (6)"
-        INTEGER labs_attended "Labs Attended (0-6)"
-        REAL lab_attendance_pct "Lab Compliance Percentage"
-        REAL overall_attendance_pct "Weighted Overall Attendance %"
-        TEXT attendance_tier "Tier ('Excellent', 'Satisfactory', 'Irregular', 'Critical')"
+        INTEGER attendance_id       PK "Auto-increment PK"
+        INTEGER student_id          FK "References students(student_id)"
+        INTEGER total_lectures         "Scheduled Lectures (12)"
+        INTEGER lectures_attended      "Lectures Attended (0-12)"
+        REAL    lecture_attendance_pct "Lecture Compliance %"
+        INTEGER total_lab_sessions     "Scheduled Labs (6)"
+        INTEGER labs_attended          "Labs Attended (0-6)"
+        REAL    lab_attendance_pct     "Lab Compliance %"
+        REAL    overall_attendance_pct "Combined Attendance %"
+        TEXT    attendance_tier        "Excellent / Satisfactory / Irregular / Critical"
     }
 
     ACADEMIC_ASSESSMENTS {
-        INTEGER assessment_id PK "Unique Assessment Evaluation Identifier"
-        INTEGER student_id FK "References students(student_id)"
-        INTEGER course_id FK "References courses(course_id)"
-        REAL quiz1_marks "Quiz 1 Marks (0.0-10.0)"
-        REAL quiz2_marks "Quiz 2 Marks (0.0-10.0)"
-        REAL quiz3_marks "Quiz 3 Marks (0.0-10.0)"
-        REAL avg_quiz_score "Average of 3 Quizzes (0.0-10.0)"
-        REAL midterm_marks "Midterm Examination Marks (0.0-30.0)"
-        REAL final_marks "Final Comprehensive Examination Marks (0.0-50.0)"
-        REAL composite_score "Standardized Course Grade (0.0-100.0 scale)"
-        TEXT letter_grade "Letter Grade ('A', 'B', 'C', 'D', 'F')"
-        TEXT academic_standing "Honor tier / Good Standing / Warning / Probation"
-        TEXT dropout_risk "Classified Risk ('Low Risk', 'Medium Risk', 'High Risk')"
+        INTEGER assessment_id    PK "Auto-increment PK"
+        INTEGER student_id       FK "References students(student_id)"
+        REAL    quiz1_marks         "Quiz 1 (0.0-10.0)"
+        REAL    quiz2_marks         "Quiz 2 (0.0-10.0)"
+        REAL    quiz3_marks         "Quiz 3 (0.0-10.0)"
+        REAL    avg_quiz_score      "Average of 3 Quizzes"
+        REAL    midterm_marks       "Midterm (0.0-30.0)"
+        REAL    final_marks         "Final Exam (0.0-50.0)"
+        REAL    composite_score     "Standardized Score (0.0-100.0)"
+        TEXT    letter_grade        "A / B / C / D / F"
+        TEXT    academic_standing   "Honor List / Good Standing / Warning / Probation"
+        TEXT    dropout_risk        "Rule-based label: Low / Medium / High Risk"
     }
 ```
 
@@ -69,19 +59,34 @@ erDiagram
 
 ## 2. Relational Integrity & Constraint Catalog
 
-| Table | Constraint Type | Constraint Expression / Foreign Target | Purpose |
-| :--- | :--- | :--- | :--- |
-| `students` | Primary Key | `student_id` | Ensures unique identification of every registered student. |
-| `students` | Check | `age >= 16 AND age <= 80` | Enforces realistic collegiate demographic boundaries. |
-| `students` | Check | `gender IN ('Male', 'Female', 'Other')` | Enforces categorical consistency. |
-| `students` | Check | `previous_gpa >= 0.0 AND previous_gpa <= 4.0` | Restricts GPA to standard collegiate 4.0 scale. |
-| `courses` | Primary Key | `course_id` | Guarantees unique primary identification for department courses. |
-| `courses` | Unique Key | `course_code` | Eliminates duplicated course codes within the catalog. |
-| `attendance_records` | Primary Key | `attendance_id` | Auto-incrementing unique key per attendance entry. |
-| `attendance_records` | Foreign Key | `student_id REFERENCES students(student_id) ON DELETE CASCADE` | Prevents orphan attendance rows if a student is removed. |
-| `attendance_records` | Foreign Key | `course_id REFERENCES courses(course_id) ON DELETE CASCADE` | Enforces course catalog referential integrity. |
-| `academic_assessments` | Primary Key | `assessment_id` | Auto-incrementing unique key per assessment record. |
-| `academic_assessments` | Foreign Key | `student_id REFERENCES students(student_id) ON DELETE CASCADE` | Links grades strictly to verified student profiles. |
-| `academic_assessments` | Foreign Key | `course_id REFERENCES courses(course_id) ON DELETE CASCADE` | Links grades strictly to verified course offerings. |
-| `academic_assessments` | Check | `quiz1_marks BETWEEN 0.0 AND 10.0` | Prevents invalid grading input outside rubric bounds. |
-| `academic_assessments` | Check | `composite_score BETWEEN 0.0 AND 100.0` | Bounds normalized score to 100-point collegiate scale. |
+| Table | Constraint | Expression | Purpose |
+|-------|-----------|------------|---------|
+| `students` | Primary Key | `student_id` | Unique student identification |
+| `students` | CHECK | `age BETWEEN 16 AND 80` | Realistic age bounds |
+| `students` | CHECK | `gender IN ('Male','Female','Other')` | Categorical consistency |
+| `students` | CHECK | `previous_gpa BETWEEN 0.0 AND 4.0` | Standard GPA scale |
+| `attendance_records` | Primary Key | `attendance_id` (AUTOINCREMENT) | Unique attendance log |
+| `attendance_records` | Foreign Key | `student_id → students(student_id) ON DELETE CASCADE` | Referential integrity |
+| `attendance_records` | CHECK | `lectures_attended <= total_lectures` | Cannot exceed scheduled count |
+| `attendance_records` | CHECK | `attendance_tier IN (...)` | Controlled vocabulary |
+| `academic_assessments` | Primary Key | `assessment_id` (AUTOINCREMENT) | Unique assessment record |
+| `academic_assessments` | Foreign Key | `student_id → students(student_id) ON DELETE CASCADE` | Referential integrity |
+| `academic_assessments` | CHECK | `quiz*_marks BETWEEN 0.0 AND 10.0` | Valid quiz score range |
+| `academic_assessments` | CHECK | `midterm_marks BETWEEN 0.0 AND 30.0` | Valid midterm range |
+| `academic_assessments` | CHECK | `final_marks BETWEEN 0.0 AND 50.0` | Valid final range |
+| `academic_assessments` | CHECK | `composite_score BETWEEN 0.0 AND 100.0` | Normalized score |
+| `academic_assessments` | CHECK | `dropout_risk IN ('Low Risk','Medium Risk','High Risk')` | Controlled label set |
+
+---
+
+## 3. Dropout Risk Label Definition
+
+`dropout_risk` is assigned in `src/transform.py` by this rule:
+
+| Label | Condition (ANY of) |
+|-------|-------------------|
+| `High Risk` | `overall_attendance_pct < 40` OR `composite_score < 45` OR `previous_gpa < 1.8` |
+| `Medium Risk` | `overall_attendance_pct < 65` OR `composite_score < 60` (and not High Risk) |
+| `Low Risk` | All other students |
+
+This is **not** observed dropout data. It is a pedagogical classification label.

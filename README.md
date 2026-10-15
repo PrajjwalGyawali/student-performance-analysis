@@ -20,7 +20,7 @@ An enterprise-grade, reproducible **End-to-End ETL (Extract, Transform, Load) an
     CLEANING & TRANSFORMATION (Pandas)
               │
               ▼
-    ENTITY NORMALIZATION (4 Relational Tables)
+    ENTITY NORMALIZATION (3 Relational Tables)
               │
               ▼
         LOAD (SQLAlchemy → SQLite DB)
@@ -41,7 +41,6 @@ student-performance-analysis/
 │   │   └── student_dropout_behavior_raw.csv    # Preserved original Kaggle dataset (300 records)
 │   └── processed/
 │       ├── students.csv                        # Normalized students entity (300 rows)
-│       ├── courses.csv                         # Normalized courses catalog (3 rows)
 │       ├── attendance_records.csv              # Normalized attendance logs (300 rows)
 │       └── academic_assessments.csv            # Normalized exam & risk logs (300 rows)
 │
@@ -70,12 +69,14 @@ student-performance-analysis/
 │   ├── 02_attendance_vs_performance.png        # Lecture & lab scatter plots
 │   ├── 03_correlation_matrix.png               # Correlation heatmap
 │   ├── 04_grade_by_attendance_tier.png         # Attendance boxplot analysis
-│   ├── 05_dropout_risk_breakdown.png           # Risk category distribution
-│   └── 06_department_performance.png           # Department performance by gender
+│   └── 05_dropout_risk_breakdown.png           # Risk category distribution
 │
 ├── main_pipeline.py                            # Master one-click end-to-end execution runner
 ├── PROJECT_REPORT.md                           # Comprehensive final capstone project report
-└── README.md                                   # Project documentation
+├── EXTRACTION_AND_EDA_REPORT.md                # Phase 1 & 2 detailed documentation
+├── TRANSFORMATION_AND_ANALYSIS_REPORT.md       # Phase 3 & 4 detailed documentation
+├── DATABASE_AND_REPORTING_REPORT.md            # Phase 5, 6 & 7 detailed documentation
+└── README.md                                   # Project overview and navigation
 ```
 
 ---
@@ -91,8 +92,8 @@ The project is built across three cohesive engineering milestones:
   * Diagnostic visualizations (`visualizations/01_...`, `02_...`, `03_...`).
 * **Milestone 2: Cleaning, Transformation, Normalization & Insights (Phases 3 & 4)**
   * Missing value handling & string formatting (`src/transform.py`).
-  * Calculated metrics: composite score (100-pt scale), letter grades, dropout risk tiers.
-  * Relational entity normalization into 4 CSV tables (`data/processed/`).
+  * Calculated metrics: composite score (100-pt scale), letter grades, rule-based dropout risk tiers.
+  * Relational entity normalization into 3 CSV tables (`data/processed/`).
   * Analytical evaluations & research questions (`src/analysis.py`, `visualizations/04_...`, `05_...`).
 * **Milestone 3: Database Design, Automated ETL Loading & SQL Reporting (Phases 5, 6 & 7)**
   * Relational database schema with PK, FK, and CHECK constraints (`database/schema_and_queries.sql`).
@@ -125,13 +126,16 @@ This automatically extracts the raw data, executes EDA, cleans and normalizes ta
 ## SQL Reporting Capabilities (Phase 7 Highlights)
 
 The pipeline executes 10 advanced SQL queries illustrating:
-1. **Multi-Table JOINs & Aggregations:** Benchmarking department exam performance.
-2. **Conditional CASE Statements:** Quantifying high-risk student rates across attendance tiers.
-3. **Filtering & Slicing:** Identifying Dean's Honor List recipients.
-4. **Demographic Grouping & HAVING:** Analyzing risk rates across age cohorts and genders.
-5. **Scalar Subqueries:** Pinpointing students scoring above course averages.
-6. **Window Functions (`DENSE_RANK()`):** Computing intra-department class rank.
-7. **Common Table Expressions (CTEs):** Calculating percentage share of letter grades.
+1. **Multi-Table JOINs & Aggregations:** Performance and risk breakdown by attendance tier.
+2. **Demographic Grouping & HAVING:** Dropout risk distribution by gender and age cohort.
+3. **Multi-table JOIN & WHERE Filtering:** Identifying Dean's Honor List recipients.
+4. **Conditional CASE Statements:** Quiz performance tiers vs examination outcomes.
+5. **Scalar Subqueries:** Pinpointing students scoring above cohort average final marks.
+6. **Complex CASE Expressions & Multi-Table JOIN:** Lecture vs lab participation profile analysis.
+7. **Multi-condition Filtering:** Actionable academic early-intervention roster for high-risk students.
+8. **Window Functions (`DENSE_RANK()`):** Top 10 students by composite score.
+9. **Common Table Expressions (CTEs) & Window Aggregates:** Grade distribution percentages across full cohort.
+10. **Conditional CASE & GROUP BY:** Prior GPA bands vs current academic performance.
 
 ---
 

@@ -1,11 +1,10 @@
 """
 Phase 3: Data Cleaning & Transformation Module
 Cleans raw data, imputes missing telemetry, engineers academic features,
-and normalizes the flat dataset into 4 relational entities:
+and normalizes the flat dataset into 3 relational entities:
 1. students
-2. courses
-3. attendance_records
-4. academic_assessments
+2. attendance_records
+3. academic_assessments
 """
 
 import os
@@ -16,7 +15,7 @@ PROCESSED_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "processed
 
 def clean_and_transform_data(df_raw: pd.DataFrame) -> dict:
     """
-    Cleans raw student dataset and transforms it into 4 normalized relational DataFrames.
+    Cleans raw student dataset and transforms it into 3 normalized relational DataFrames.
     """
     print("=" * 80)
     print("PHASE 3: DATA CLEANING & TRANSFORMATION")
