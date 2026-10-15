@@ -1,7 +1,6 @@
 # Capstone Project Report: End-to-End ETL & Academic Performance Pipeline
 
-**Course / Capstone:** Data Science with Python  
-**Project Title:** End-to-End ETL & Academic Learning Analytics Pipeline  
+**Project:** Capstone Project — End-to-End ETL & Academic Performance Pipeline  
 **Author:** Prajjwal Gyawali  
 **GitHub Repository:** [https://github.com/PrajjwalGyawali/student-performance-analysis.git](https://github.com/PrajjwalGyawali/student-performance-analysis.git)  
 **Database Engine:** SQLite (ANSI SQL Compliant, relational engine via SQLAlchemy)  
@@ -21,7 +20,7 @@ $$\text{Raw Data} \longrightarrow \text{Extract} \longrightarrow \text{Explore (
 
 * **Source Domain:** Education & Academic Learning Analytics
 * **Origin:** Kaggle Dataset Repository (`muhammadkhubaibahmad/student-performance-and-clustering-dataset`)
-* **Preservation Strategy:** The original dataset was preserved unmodified in [`data/raw/student_dropout_behavior_raw.csv`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/data/raw/student_dropout_behavior_raw.csv).
+* **Preservation Strategy:** The original dataset was preserved unmodified in [`data/raw/student_dropout_behavior_raw.csv`](data/raw/student_dropout_behavior_raw.csv).
 * **Dataset Scale:** 300 records across 16 raw features.
 * **Feature Schema:**
   * Identifiers & Demographics: `student_id`, `name`, `age`, `gender`, `previous_gpa`
@@ -29,13 +28,13 @@ $$\text{Raw Data} \longrightarrow \text{Extract} \longrightarrow \text{Explore (
   * Assignment Telemetry: `total_assignments`, `assignments_submitted`
   * Attendance Tracking: `total_lectures`, `lectures_attended`, `total_lab_sessions`, `labs_attended`
 
-The extraction logic was implemented in [`src/extract.py`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/src/extract.py), verifying schema headers and data integrity prior to downstream ingestion.
+The extraction logic was implemented in [`src/extract.py`](src/extract.py), verifying schema headers and data integrity prior to downstream ingestion.
 
 ---
 
 ## 3. Exploratory Data Analysis & Data Quality Audit (Phase 2)
 
-EDA was executed through [`src/eda.py`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/src/eda.py) to audit distributions and data quality issues:
+EDA was executed through [`src/eda.py`](src/eda.py) to audit distributions and data quality issues:
 
 ### 3.1 Data Quality Findings
 1. **Pervasive Missing Values:** `assignments_submitted` contained 300 missing (NaN) values (100% missing data in the raw extraction), representing a classic real-world incomplete sensor/telemetry collection failure.
@@ -44,19 +43,19 @@ EDA was executed through [`src/eda.py`](file:///c:/Users/LOQ/Desktop/Phython/stu
 4. **Demographic Balance:** Balanced cohort comprising 155 Female (51.7%) and 145 Male (48.3%) students aged 18 to 25 (mean age 21.55).
 
 ### 3.2 Visual Explorations
-* [`visualizations/01_grade_distributions.png`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/visualizations/01_grade_distributions.png): Visualized distributions for midterm (mean 19.97/30) and final marks (mean 37.38/50).
-* [`visualizations/02_attendance_vs_performance.png`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/visualizations/02_attendance_vs_performance.png): Examined attendance compliance versus exam achievement.
-* [`visualizations/03_correlation_matrix.png`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/visualizations/03_correlation_matrix.png): Inter-feature correlation analysis.
+* [`visualizations/01_grade_distributions.png`](visualizations/01_grade_distributions.png): Visualized distributions for midterm (mean 19.97/30) and final marks (mean 37.38/50).
+* [`visualizations/02_attendance_vs_performance.png`](visualizations/02_attendance_vs_performance.png): Examined attendance compliance versus exam achievement.
+* [`visualizations/03_correlation_matrix.png`](visualizations/03_correlation_matrix.png): Inter-feature correlation analysis.
 
 ---
 
 ## 4. Data Cleaning, Transformation & Normalization (Phase 3)
 
-Implemented in [`src/transform.py`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/src/transform.py):
+Implemented in [`src/transform.py`](src/transform.py):
 
 ### 4.1 Cleaning Operations & Rationales
 1. **String Standardization:** Standardized `name` (Title Case) and `gender` (Capitalized, whitespace stripped).
-2. **Entity Attribute Decomposition:** Split `name` into `first_name` and `last_name` to conform to 1NF database normalization standards.
+2. **Entity Attribute Decomposition:** Split `name` into `first_name` and `last_name` for granular attribute decomposition, structured sorting, indexing, and standardized reporting.
 3. **Handling Missing Values & Feature Elimination (Methodological Integrity):** In the raw dataset, `assignments_submitted` had 300 missing values (100% null). Rather than fabricating data through synthetic imputation—which would invent unobserved student behaviors—we made the principled engineering decision to drop `assignments_submitted` along with the redundant constant `total_assignments` (5 for all rows). This preserves analytical honesty and statistical validity while fulfilling the project requirement for handling missing data.
 
 ### 4.2 Feature Engineering
@@ -84,7 +83,7 @@ To ensure analytical integrity, the raw flat dataset was normalized into **3 gen
 
 * **RDBMS Engine:** SQLite / ANSI SQL Compliant (`database/student_performance.db`).
 * **Design Strategy:** Normalized 3-table relational architecture linked by `student_id`.
-* **ERD Specification:** Documented in [`database/ERD_DIAGRAM.md`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/database/ERD_DIAGRAM.md) and [`database/erd_diagram.png`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/database/erd_diagram.png).
+* **ERD Specification:** Documented in [`database/ERD_DIAGRAM.md`](database/ERD_DIAGRAM.md) and [`database/erd_diagram.png`](database/erd_diagram.png).
 
 ```
 [ students ] (1) ──────────< (1:1) [ attendance_records ]
@@ -102,40 +101,40 @@ To ensure analytical integrity, the raw flat dataset was normalized into **3 gen
 
 ## 6. ETL Loading Pipeline (Phase 6)
 
-Implemented in [`src/load.py`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/src/load.py):
+Implemented in [`src/load.py`](src/load.py):
 * Uses `SQLAlchemy` to maintain database-agnostic connectivity.
-* Automatically creates database tables directly from DDL in [`database/schema_and_queries.sql`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/database/schema_and_queries.sql).
+* Automatically creates database tables directly from DDL in [`database/schema_and_queries.sql`](database/schema_and_queries.sql).
 * Loads normalized Pandas DataFrames in strict dependency order (`students` parent table loaded prior to child tables).
 * Validates post-load row counts:
   * `students`: 300 rows
   * `attendance_records`: 300 rows
   * `academic_assessments`: 300 rows
 
-The master execution script [`main_pipeline.py`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/main_pipeline.py) runs the entire extraction, cleaning, transformation, loading, and reporting lifecycle in **under 7.0 seconds**.
+The master execution script [`main_pipeline.py`](main_pipeline.py) runs the entire extraction, cleaning, transformation, loading, and reporting lifecycle in **under 4.0 seconds**.
 
 ---
 
 ## 7. Data Analysis & Insights (Phase 4 & 7)
 
 ### 7.1 Five Core Analytical Questions
-1. **How does attendance tier influence composite score?** Attendance tiers exhibit only slight variance: students in the `Excellent` tier averaged 71.34 vs 69.25 in `Critical`.
-2. **What is the demographic distribution of dropout risk?** High-risk rates are distributed evenly across genders (55.2% in males, 44.5% in females) and age groups (highest in 23-25 cohort at 58.6%).
-3. **What proportion achieves Dean's Honor List standing?** Exactly 11 students (3.7%) met the rigorous criteria of $\ge 80\%$ attendance and $\ge 85.0$ composite score.
+1. **How does attendance tier influence composite score?** Attendance tiers exhibit only slight variance: students in the `Excellent` tier averaged 71.34 vs 69.25 in `Critical` (a modest 2.1-point difference).
+2. **What is the demographic distribution of dropout risk?** High-risk classification is elevated in male students (55.17%, 80 of 145) compared to female students (44.52%, 69 of 155), a 10.65 percentage point difference. Across age cohorts for all students, risk rates are relatively uniform: 50.00% (18–19), 50.44% (20–22), and 48.70% (23–25), with the 23–25 cohort exhibiting the lowest overall risk rate.
+3. **What proportion achieves Dean's Honor List standing?** Exactly 11 students (3.67%) met the rigorous criteria of $\ge 80\%$ attendance and $\ge 85.0$ composite score.
 4. **How predictive is continuous assessment (quizzes) for final examination success?** Students in the High Quiz Tier ($\ge 8.0$) achieved an average final exam mark of **41.91/50**, compared to **31.08/50** for the Low Quiz Tier ($< 4.0$).
-5. **Does lab practical attendance impact final exams differently than lectures?** High lab attendance ($\ge 80\%$) averaged **37.79** on finals vs **34.86** for low lab attendance ($< 40\%$). For lectures, the high vs low attendance gap was minimal (**37.58** vs **37.50**).
+5. **Does lab practical attendance impact final exams differently than lectures?** High lab attendance ($\ge 80\%$) averaged **37.79** on finals vs **34.86** for low lab attendance ($< 40\%$) (a **2.93-point** difference). In contrast, high lecture attendance ($\ge 80\%$) averaged **37.87** on finals vs **38.23** for low lecture attendance ($< 40\%$) (a **-0.36-point** difference).
 
 ### 7.2 Five Key Data-Driven Insights
-1. **Attendance Tiers Differ Modestly:** Attendance-tier composite scores differ only slightly: 'Excellent' tier averaged **71.3** vs **69.3** for 'Critical' tier (a **2.0-point** gap). The Pearson correlation between overall attendance percentage and final marks is **r = 0.03**, indicating a very weak linear relationship in this cohort.
+1. **Attendance Tiers Differ Modestly:** Attendance-tier composite scores differ only slightly: 'Excellent' tier averaged **71.3** vs **69.2** for 'Critical' tier (a **2.1-point** gap). The Pearson correlation between overall attendance percentage and final marks is **r = 0.03**, indicating a very weak linear relationship in this cohort.
 2. **Rule-Based High-Risk Classification:** Exactly **149 students (49.7% of cohort)** carry the 'High Risk' label. This is a rule-based classification defined in `transform.py`—a student is flagged High Risk when meeting ANY of: overall attendance $< 40\%$, composite score $< 45$, or previous GPA $< 1.8$. It does not represent observed dropout outcomes.
 3. **Dean's Honor Cohort:** Exactly **11 students (3.7% of cohort)** achieved Dean's Honor List standing ($\ge 80\%$ attendance AND $\ge 85.0$ composite score).
-4. **Lab vs Lecture Attendance:** Students with $\ge 80\%$ lab attendance averaged **37.8** on final exams vs **34.9** for $< 40\%$ lab attendance (**2.9-point** difference). For lectures, the same comparison gives **37.6** vs **37.5** (**0.1-point** difference). Both effects are modest and should not be interpreted as causal.
+4. **Lab vs Lecture Attendance:** Students with $\ge 80\%$ lab attendance averaged **37.8** on final exams vs **34.9** for $< 40\%$ lab attendance (**2.9-point** difference). For lectures, the same comparison gives **37.9** vs **38.2** (**-0.4-point** difference). Both effects are modest and should not be interpreted as causal.
 5. **Historical GPA Linear Association:** Previous GPA vs final marks yielded Pearson **r = 0.10**, indicating that a student's prior GPA has very little linear association with their final exam score in this dataset. Similarly, previous GPA vs midterm yielded Pearson **r = 0.01**.
 
 ---
 
 ## 8. SQL Analysis & Reporting (Phase 7)
 
-Documented in [`reports/sql_reports_output.md`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/reports/sql_reports_output.md) and [`src/sql_reporting.py`](file:///c:/Users/LOQ/Desktop/Phython/student-performance-analysis/src/sql_reporting.py):
+Documented in [`reports/sql_reports_output.md`](reports/sql_reports_output.md) and [`src/sql_reporting.py`](src/sql_reporting.py):
 * **Query 1 (JOIN, GROUP BY, CASE):** Performance & risk breakdown by attendance tier.
 * **Query 2 (GROUP BY, HAVING):** Dropout risk distribution by gender and age group.
 * **Query 3 (Multi-table JOIN, WHERE, ORDER BY):** Dean's Honor List recognition roster.
