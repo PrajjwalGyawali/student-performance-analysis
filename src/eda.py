@@ -60,13 +60,20 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
             id_list = grp["student_id"].tolist()
             print(f"    * '{name_val}': IDs {id_list} (Kept as distinct student entities)")
             
-    print("\n--- 2.3 Text Consistency & Casing Audit ---")
-    inconsistent_mask = df["name"] != df["name"].str.strip().str.title()
-    inconsistent_names_count = int(inconsistent_mask.sum())
-    print(f"Names with extra whitespace or non-standard capitalization: {inconsistent_names_count}")
-    if inconsistent_names_count > 0:
-        print(f"  Flagged records: {df.loc[inconsistent_mask, 'name'].tolist()}")
-        print("  Resolution: Handled in Phase 3 via .str.strip().str.title()")
+    print("\n--- 2.3 Text Consistency & Whitespace Audit ---")
+    # Audit for leading/trailing whitespace or multiple consecutive internal spaces
+    whitespace_mask = (df["name"] != df["name"].str.strip()) | df["name"].str.contains(r"\s{2,}", regex=True)
+    whitespace_issues_count = int(whitespace_mask.sum())
+    print(f"Names with extra whitespace (leading, trailing, or multiple spaces): {whitespace_issues_count}")
+    
+    # Audit for honorific prefixes and suffixes
+    prefixes = ["Dr.", "Mr.", "Mrs.", "Ms.", "Miss", "Prof."]
+    suffixes = ["II", "III", "IV", "MD", "DDS", "PhD", "DVM", "Jr.", "Sr."]
+    has_prefix_cnt = int(df["name"].apply(lambda n: any(n.startswith(p + " ") for p in prefixes)).sum())
+    has_suffix_cnt = int(df["name"].apply(lambda n: any(n.endswith(" " + s) for s in suffixes)).sum())
+    print(f"Names containing prefixes/honorifics (e.g., Dr., Mr.): {has_prefix_cnt}")
+    print(f"Names containing suffixes/credentials (e.g., II, MD, DDS, Jr.): {has_suffix_cnt}")
+    print("  Resolution: Handled in Phase 3 by stripping titles and suffixes to isolate clean first and last names.")
         
     print("\n--- 2.4 Name-Gender Semantic Alignment Check ---")
     print("Observation: Several records exhibit discordant traditional name-gender associations")
@@ -179,7 +186,9 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
         "duplicate_rows": int(dup_rows),
         "duplicate_student_ids": int(dup_ids),
         "duplicate_names": int(dup_names),
-        "inconsistent_names_count": inconsistent_names_count,
+        "whitespace_issues_count": whitespace_issues_count,
+        "names_with_prefix_count": has_prefix_cnt,
+        "names_with_suffix_count": has_suffix_cnt,
         "outlier_summary": outlier_summary
     }
 

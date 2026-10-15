@@ -55,13 +55,13 @@ In this phase, we established the project repository, ingested the raw dataset, 
   3. `"Michael Davis"`: `student_id` 38 and 176
 * **Analytical Conclusion:** Because each of these duplicate names is associated with a distinct, unique `student_id`, they represent distinct individual students rather than duplicate ingestion entries, and were therefore retained in the dataset.
 
-### 3.3 Text Formatting & Casing Audit
-* Comparing raw `name` strings to `.str.strip().str.title()` flagged **4 names with non-standard capitalization or whitespace irregularities**:
-  1. `'Brandon Parks II'`
-  2. `'Amy Patterson MD'`
-  3. `'Dr. Jake Cortez MD'`
-  4. `'Sonya Young DDS'`
-* **Resolution:** In Phase 3 (`transform.py`), `.str.strip().str.title()` is systematically applied, followed by attribute decomposition into `first_name` and `last_name`.
+### 3.3 Text Formatting — Honorific Prefixes & Credential Suffixes
+* The name audit identified **8 names carrying honorific prefixes** (e.g., `Dr.`, `Mr.`) and **6 names carrying professional or ordinal suffixes** (e.g., `II`, `MD`, `DDS`, `Jr.`), with 2 names holding both a prefix and a suffix:
+  * **Prefix-only:** `Dr. Andrew Chang`, `Dr. Jamie Mclaughlin`, `Dr. Susan James`, `Mr. Gabriel Harper`, `Dr. Richard Cortez`, `Mr. Steven Lawrence`
+  * **Suffix-only:** `Brandon Parks II`, `Amy Patterson MD`, `Sonya Young DDS`, `Michael Williamson Jr.`
+  * **Both prefix and suffix:** `Dr. Jake Cortez MD`, `Dr. David Hall Jr.`
+* **Why `.str.title()` was not used:** Applying `.str.title()` would corrupt these names by recapitalizing internal acronym and numeral tokens (`MD` → `Md`, `DDS` → `Dds`, `II` → `Ii`, `Jr.` → `Jr.`).
+* **Resolution:** In Phase 3 (`transform.py`), a token-level `parse_clean_name` function strips known prefixes and suffixes before assigning `first_name` and `last_name`, preserving correct casing throughout.
 
 ### 3.4 Semantic Alignment Check (Name vs Gender)
 * An audit comparing names to the `gender` column revealed discordance in several traditional name-gender associations (e.g., `"Kristina Vaughan"` listed as Male, `"Mark Thomas"` listed as Female, `"Michael Davis"` listed as Female, `"Amanda Perez"` listed as Male).
@@ -162,35 +162,35 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
     Generates summary statistics, text quality audits, and visual diagnostic plots.
     """
     os.makedirs(VIS_DIR, exist_ok=True)
-    
+
     print("=" * 80)
     print("PHASE 2: EXPLORATORY DATA ANALYSIS (EDA) & DATA QUALITY AUDIT")
     print("=" * 80)
-    
+
     # 1. Basic Structure
     num_rows, num_cols = df.shape
     print(f"Total Records: {num_rows}")
     print(f"Total Features: {num_cols}")
-    
+
     print("\n--- 1.1 Column Data Types ---")
     for col, dtype in df.dtypes.items():
         print(f"  - {col}: {dtype}")
-        
+
     print("\n--- 1.2 Number of Unique Values per Column ---")
     unique_counts = df.nunique()
     for col, u_cnt in unique_counts.items():
         print(f"  - {col}: {u_cnt} unique values")
-        
+
     print("\n--- 1.3 First 5 Sample Records ---")
     print(df.head(5).to_string(index=False))
-    
+
     # 2. Data Quality Checks
     print("\n--- 2.1 Missing Values Analysis ---")
     missing_counts = df.isnull().sum()
     missing_pct = (missing_counts / num_rows) * 100
     missing_df = pd.DataFrame({"Missing Count": missing_counts, "Percentage (%)": missing_pct})
     print(missing_df[missing_df["Missing Count"] > 0])
-    
+
     print("\n--- 2.2 Duplication Analysis ---")
     dup_rows = df.duplicated().sum()
     dup_ids = df["student_id"].duplicated().sum()
@@ -198,28 +198,46 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
     print(f"Duplicate Full Rows: {dup_rows}")
     print(f"Duplicate Student IDs: {dup_ids}")
     print(f"Duplicate Student Names: {dup_names}")
-    
-    print("\n--- 2.3 Text Consistency & Casing Audit ---")
-    inconsistent_mask = df["name"] != df["name"].str.strip().str.title()
-    inconsistent_names_count = int(inconsistent_mask.sum())
-    print(f"Names with extra whitespace or non-standard capitalization: {inconsistent_names_count}")
-    
+    if dup_names > 0:
+        dup_sample = df[df["name"].duplicated(keep=False)].sort_values("name")[["student_id", "name", "gender"]]
+        print(f"  Note: {dup_names} names appear more than once, but have distinct student_ids:")
+        for name_val, grp in dup_sample.groupby("name"):
+            id_list = grp["student_id"].tolist()
+            print(f"    * '{name_val}': IDs {id_list} (Kept as distinct student entities)")
+
+    print("\n--- 2.3 Text Consistency & Whitespace Audit ---")
+    # Audit for leading/trailing whitespace or multiple consecutive internal spaces
+    whitespace_mask = (df["name"] != df["name"].str.strip()) | df["name"].str.contains(r"\s{2,}", regex=True)
+    whitespace_issues_count = int(whitespace_mask.sum())
+    print(f"Names with extra whitespace (leading, trailing, or multiple spaces): {whitespace_issues_count}")
+
+    # Audit for honorific prefixes and suffixes
+    prefixes = ["Dr.", "Mr.", "Mrs.", "Ms.", "Miss", "Prof."]
+    suffixes = ["II", "III", "IV", "MD", "DDS", "PhD", "DVM", "Jr.", "Sr."]
+    has_prefix_cnt = int(df["name"].apply(lambda n: any(n.startswith(p + " ") for p in prefixes)).sum())
+    has_suffix_cnt = int(df["name"].apply(lambda n: any(n.endswith(" " + s) for s in suffixes)).sum())
+    print(f"Names containing prefixes/honorifics (e.g., Dr., Mr.): {has_prefix_cnt}")
+    print(f"Names containing suffixes/credentials (e.g., II, MD, DDS, Jr.): {has_suffix_cnt}")
+    print("  Resolution: Handled in Phase 3 by stripping titles and suffixes to isolate clean first and last names.")
+
     print("\n--- 2.4 Name-Gender Semantic Alignment Check ---")
     print("Observation: Several records exhibit discordant traditional name-gender associations")
     print("  (e.g., 'Kristina Vaughan' listed as Male, 'Mark Thomas' listed as Female).")
-    
+    print("  Assessment: Characteristics indicate synthetic dataset generation (e.g. Faker).")
+    print("  Integrity Policy: Gender telemetry preserved unmodified to avoid subjective alteration.")
+
     # 3. Descriptive Statistics
     print("\n--- 2.5 Numerical Feature Summary Statistics ---")
     numeric_summary = df.describe().round(2)
     print(numeric_summary.to_string())
-    
+
     # 4. Categorical Feature Inspection
     print("\n--- 2.6 Categorical Feature Distributions ---")
     print("Gender Distribution:")
     print(df["gender"].value_counts())
     print("\nAge Value Counts:")
     print(df["age"].value_counts().sort_index())
-    
+
     # 5. Outlier Detection using IQR Method
     print("\n--- 2.7 Outlier Audit (IQR Method) ---")
     outlier_summary = {}
@@ -236,9 +254,9 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
 
     # 6. Generate and Save Visualizations
     if save_visualizations:
-        # figures 1-3 generated here
-        pass
-        
+        print("\n--- 2.8 Generating Visualizations ---")
+        # ... (figures 1-3 generated here; see src/eda.py for full implementation)
+
     return {
         "num_rows": num_rows,
         "num_cols": num_cols,
@@ -249,7 +267,9 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
         "duplicate_rows": int(dup_rows),
         "duplicate_student_ids": int(dup_ids),
         "duplicate_names": int(dup_names),
-        "inconsistent_names_count": inconsistent_names_count,
+        "whitespace_issues_count": whitespace_issues_count,
+        "names_with_prefix_count": has_prefix_cnt,
+        "names_with_suffix_count": has_suffix_cnt,
         "outlier_summary": outlier_summary
     }
 

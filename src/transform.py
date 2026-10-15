@@ -25,13 +25,26 @@ def clean_and_transform_data(df_raw: pd.DataFrame) -> dict:
     df = df_raw.copy()
     
     # --- 3.1 Cleaning & Standardizing Strings ---
-    df["name"] = df["name"].astype(str).str.strip().str.title()
+    # Strip whitespace, collapse repeated spaces, and remove honorific prefixes and suffixes
+    # (avoiding .str.title() which damages acronym suffixes like MD, DDS, and numeral II)
+    PREFIXES = {"Dr.", "Mr.", "Mrs.", "Ms.", "Miss", "Prof."}
+    SUFFIXES = {"II", "III", "IV", "MD", "DDS", "PhD", "DVM", "Jr.", "Sr."}
+
+    def parse_clean_name(raw_name: str):
+        clean_text = " ".join(str(raw_name).strip().split())
+        tokens = clean_text.split(" ")
+        while tokens and tokens[0] in PREFIXES:
+            tokens.pop(0)
+        while tokens and tokens[-1] in SUFFIXES:
+            tokens.pop(-1)
+        first = tokens[0] if tokens else ""
+        last = " ".join(tokens[1:]) if len(tokens) > 1 else ""
+        return first, last
+
+    name_parsed = df["name"].apply(parse_clean_name).tolist()
+    df["first_name"] = [p[0] for p in name_parsed]
+    df["last_name"] = [p[1] for p in name_parsed]
     df["gender"] = df["gender"].astype(str).str.strip().str.capitalize()
-    
-    # Split full name into first and last name
-    name_split = df["name"].str.split(" ", n=1, expand=True)
-    df["first_name"] = name_split[0]
-    df["last_name"] = name_split[1].fillna("")
     
     # --- 3.2 Handling Missing Values & Unnecessary Columns ---
     # Rationale: In the raw dataset, 'assignments_submitted' has 300 nulls (100% missing).
