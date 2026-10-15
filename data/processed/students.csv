@@ -25,11 +25,11 @@ student_id,first_name,last_name,age,age_group,gender,previous_gpa
 24,Colton,Bradley,25,23-25,Male,2.89
 25,Amy,Johnson,20,20-22,Female,2.97
 26,Ryan,Lyons,24,23-25,Female,2.21
-27,Dr.,Andrew Chang,18,18-19,Male,3.34
-28,Michael,Williamson Jr.,22,20-22,Female,4.0
+27,Andrew,Chang,18,18-19,Male,3.34
+28,Michael,Williamson,22,20-22,Female,4.0
 29,Jessica,Hart,20,20-22,Female,3.01
 30,Stephanie,Gonzales,22,20-22,Male,4.0
-31,Dr.,Jamie Mclaughlin,22,20-22,Male,3.29
+31,Jamie,Mclaughlin,22,20-22,Male,3.29
 32,Diana,Martin,20,20-22,Male,3.39
 33,Jessica,Russell,18,18-19,Male,2.87
 34,Christopher,Buchanan,21,20-22,Male,3.54
@@ -59,7 +59,7 @@ student_id,first_name,last_name,age,age_group,gender,previous_gpa
 58,Michelle,Schultz,18,18-19,Male,1.69
 59,Lisa,Ingram,18,18-19,Female,2.63
 60,Garrett,Stevens,18,18-19,Male,2.13
-61,Brandon,Parks Ii,19,18-19,Male,2.45
+61,Brandon,Parks,19,18-19,Male,2.45
 62,Charles,Tate,21,20-22,Male,3.12
 63,Jeffrey,Jones,23,23-25,Female,2.89
 64,Amy,Goodman,23,23-25,Male,2.36
@@ -69,7 +69,7 @@ student_id,first_name,last_name,age,age_group,gender,previous_gpa
 68,Melissa,Wood,23,23-25,Male,2.64
 69,David,Browning,20,20-22,Female,3.71
 70,Peggy,Parker,18,18-19,Female,2.8
-71,Dr.,Susan James,22,20-22,Male,3.78
+71,Susan,James,22,20-22,Male,3.78
 72,Bryan,Cook,20,20-22,Female,1.22
 73,Richard,Davis,23,23-25,Male,1.71
 74,Brian,Murphy,22,20-22,Female,2.68
@@ -86,7 +86,7 @@ student_id,first_name,last_name,age,age_group,gender,previous_gpa
 85,Bryan,Miller,21,20-22,Female,2.13
 86,Mary,Lawson,19,18-19,Female,3.32
 87,Charles,Perry,21,20-22,Female,3.16
-88,Mr.,Gabriel Harper,21,20-22,Male,2.79
+88,Gabriel,Harper,21,20-22,Male,2.79
 89,Anne,Stanley,24,23-25,Female,1.84
 90,Nicholas,Stevens,22,20-22,Female,2.32
 91,Richard,Boyle,23,23-25,Male,2.15
@@ -121,7 +121,7 @@ student_id,first_name,last_name,age,age_group,gender,previous_gpa
 120,Christopher,Jones,20,20-22,Male,2.71
 121,Andrea,Jackson,20,20-22,Male,2.61
 122,Gary,Garner,23,23-25,Female,2.02
-123,Amy,Patterson Md,24,23-25,Female,3.49
+123,Amy,Patterson,24,23-25,Female,3.49
 124,Rachel,Reese,24,23-25,Female,2.77
 125,Amy,Johnston,24,23-25,Female,1.7
 126,Maria,Leach,21,20-22,Female,4.0
@@ -159,14 +159,14 @@ student_id,first_name,last_name,age,age_group,gender,previous_gpa
 158,Robert,Shea,25,23-25,Male,2.23
 159,Colleen,Cole,24,23-25,Male,3.83
 160,Kimberly,Johnson,23,23-25,Female,3.09
-161,Dr.,Jake Cortez Md,24,23-25,Female,3.83
+161,Jake,Cortez,24,23-25,Female,3.83
 162,Ann,Wilkinson,22,20-22,Female,2.24
 163,Russell,Gomez,21,20-22,Female,0.93
 164,Matthew,Peterson,20,20-22,Male,2.71
 165,Charles,Rodgers,22,20-22,Female,2.77
 166,Daniel,Lambert,21,20-22,Female,2.54
 167,Sara,Howell,20,20-22,Female,3.44
-168,Dr.,David Hall Jr.,22,20-22,Male,3.23
+168,David,Hall,22,20-22,Male,3.23
 169,Ashley,Zimmerman,19,18-19,Male,2.23
 170,Miguel,Harris,25,23-25,Female,3.07
 171,David,Patel,22,20-22,Female,3.08
@@ -200,8 +200,8 @@ student_id,first_name,last_name,age,age_group,gender,previous_gpa
 199,Regina,Burton,24,23-25,Male,2.99
 200,Tyler,Harper,25,23-25,Female,3.77
 201,Linda,Howard,20,20-22,Female,2.78
-202,Sonya,Young Dds,19,18-19,Male,2.23
-203,Dr.,Richard Cortez,21,20-22,Male,2.96
+202,Sonya,Young,19,18-19,Male,2.23
+203,Richard,Cortez,21,20-22,Male,2.96
 204,David,Taylor,24,23-25,Male,3.06
 205,Haley,Ramos,19,18-19,Male,4.0
 206,Kelly,Brown,22,20-22,Female,3.98
@@ -277,7 +277,7 @@ student_id,first_name,last_name,age,age_group,gender,previous_gpa
 276,John,James,19,18-19,Female,2.53
 277,Maria,Booth,19,18-19,Female,2.66
 278,Amanda,Taylor,20,20-22,Female,2.37
-279,Mr.,Steven Lawrence,23,23-25,Female,2.06
+279,Steven,Lawrence,23,23-25,Female,2.06
 280,Karen,Frost,25,23-25,Female,2.43
 281,Clarence,Myers,19,18-19,Male,3.64
 282,John,Smith,24,23-25,Female,2.39

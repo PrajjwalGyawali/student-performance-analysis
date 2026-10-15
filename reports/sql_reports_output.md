@@ -102,19 +102,19 @@ SELECT
 
 ### Query Execution Result:
 
-|   student_id | full_name          | gender   |   age |   previous_gpa |   overall_attendance_pct |   composite_score | letter_grade   | academic_standing   |
-|-------------:|:-------------------|:---------|------:|---------------:|-------------------------:|------------------:|:---------------|:--------------------|
-|          250 | Angela Rodriguez   | Female   |    25 |           3.19 |                    88.89 |            100    | A              | Dean's Honor List   |
-|          280 | Karen Frost        | Female   |    25 |           2.43 |                    94.44 |             96.27 | A              | Dean's Honor List   |
-|           71 | Dr. Susan James    | Male     |    22 |           3.78 |                    83.33 |             95.93 | A              | Dean's Honor List   |
-|          148 | Amy George         | Female   |    20 |           2.48 |                    88.89 |             93.53 | A              | Dean's Honor List   |
-|          149 | Jamie Kim          | Female   |    25 |           3.63 |                    83.33 |             91.77 | A              | Dean's Honor List   |
-|          239 | Megan Brewer       | Female   |    18 |           2.31 |                   100    |             90.4  | A              | Dean's Honor List   |
-|          212 | Cheryl Garcia      | Female   |    23 |           3.21 |                    88.89 |             89.2  | A              | Dean's Honor List   |
-|           73 | Richard Davis      | Male     |    23 |           1.71 |                    88.89 |             86.9  | A              | Dean's Honor List   |
-|          168 | Dr. David Hall Jr. | Male     |    22 |           3.23 |                    83.33 |             86.63 | A              | Dean's Honor List   |
-|          102 | Sandra Barr        | Male     |    22 |           2.71 |                    88.89 |             85.53 | A              | Dean's Honor List   |
-|          216 | Kerry Church       | Female   |    24 |           2.68 |                   100    |             85.13 | A              | Dean's Honor List   |
+|   student_id | full_name        | gender   |   age |   previous_gpa |   overall_attendance_pct |   composite_score | letter_grade   | academic_standing   |
+|-------------:|:-----------------|:---------|------:|---------------:|-------------------------:|------------------:|:---------------|:--------------------|
+|          250 | Angela Rodriguez | Female   |    25 |           3.19 |                    88.89 |            100    | A              | Dean's Honor List   |
+|          280 | Karen Frost      | Female   |    25 |           2.43 |                    94.44 |             96.27 | A              | Dean's Honor List   |
+|           71 | Susan James      | Male     |    22 |           3.78 |                    83.33 |             95.93 | A              | Dean's Honor List   |
+|          148 | Amy George       | Female   |    20 |           2.48 |                    88.89 |             93.53 | A              | Dean's Honor List   |
+|          149 | Jamie Kim        | Female   |    25 |           3.63 |                    83.33 |             91.77 | A              | Dean's Honor List   |
+|          239 | Megan Brewer     | Female   |    18 |           2.31 |                   100    |             90.4  | A              | Dean's Honor List   |
+|          212 | Cheryl Garcia    | Female   |    23 |           3.21 |                    88.89 |             89.2  | A              | Dean's Honor List   |
+|           73 | Richard Davis    | Male     |    23 |           1.71 |                    88.89 |             86.9  | A              | Dean's Honor List   |
+|          168 | David Hall       | Male     |    22 |           3.23 |                    83.33 |             86.63 | A              | Dean's Honor List   |
+|          102 | Sandra Barr      | Male     |    22 |           2.71 |                    88.89 |             85.53 | A              | Dean's Honor List   |
+|          216 | Kerry Church     | Female   |    24 |           2.68 |                   100    |             85.13 | A              | Dean's Honor List   |
 
 
 ---
@@ -175,23 +175,23 @@ SELECT
 
 ### Query Execution Result:
 
-|   student_id | student_name           | gender   | age_group   |   final_marks |   cohort_avg_final |   margin_above_avg |
-|-------------:|:-----------------------|:---------|:------------|--------------:|-------------------:|-------------------:|
-|            6 | Austin Griffin         | Male     | 20-22       |            50 |              37.38 |              12.63 |
-|            7 | Crystal Jordan         | Female   | 23-25       |            50 |              37.38 |              12.63 |
-|           11 | Lawrence Powers        | Female   | 18-19       |            50 |              37.38 |              12.63 |
-|           14 | Rita Olson             | Female   | 18-19       |            50 |              37.38 |              12.63 |
-|           18 | Gregg Gonzales         | Female   | 20-22       |            50 |              37.38 |              12.63 |
-|           20 | Mark Allen             | Female   | 20-22       |            50 |              37.38 |              12.63 |
-|           28 | Michael Williamson Jr. | Female   | 20-22       |            50 |              37.38 |              12.63 |
-|           34 | Christopher Buchanan   | Male     | 20-22       |            50 |              37.38 |              12.63 |
-|           37 | Patricia Macias        | Female   | 20-22       |            50 |              37.38 |              12.63 |
-|           43 | Melanie Cox            | Male     | 23-25       |            50 |              37.38 |              12.63 |
-|           50 | Tracy Myers            | Male     | 23-25       |            50 |              37.38 |              12.63 |
-|           53 | Jonathan Francis       | Male     | 18-19       |            50 |              37.38 |              12.63 |
-|           56 | Jacob Ramirez          | Female   | 23-25       |            50 |              37.38 |              12.63 |
-|           59 | Lisa Ingram            | Female   | 18-19       |            50 |              37.38 |              12.63 |
-|           61 | Brandon Parks Ii       | Male     | 18-19       |            50 |              37.38 |              12.63 |
+|   student_id | student_name         | gender   | age_group   |   final_marks |   cohort_avg_final |   margin_above_avg |
+|-------------:|:---------------------|:---------|:------------|--------------:|-------------------:|-------------------:|
+|            6 | Austin Griffin       | Male     | 20-22       |            50 |              37.38 |              12.63 |
+|            7 | Crystal Jordan       | Female   | 23-25       |            50 |              37.38 |              12.63 |
+|           11 | Lawrence Powers      | Female   | 18-19       |            50 |              37.38 |              12.63 |
+|           14 | Rita Olson           | Female   | 18-19       |            50 |              37.38 |              12.63 |
+|           18 | Gregg Gonzales       | Female   | 20-22       |            50 |              37.38 |              12.63 |
+|           20 | Mark Allen           | Female   | 20-22       |            50 |              37.38 |              12.63 |
+|           28 | Michael Williamson   | Female   | 20-22       |            50 |              37.38 |              12.63 |
+|           34 | Christopher Buchanan | Male     | 20-22       |            50 |              37.38 |              12.63 |
+|           37 | Patricia Macias      | Female   | 20-22       |            50 |              37.38 |              12.63 |
+|           43 | Melanie Cox          | Male     | 23-25       |            50 |              37.38 |              12.63 |
+|           50 | Tracy Myers          | Male     | 23-25       |            50 |              37.38 |              12.63 |
+|           53 | Jonathan Francis     | Male     | 18-19       |            50 |              37.38 |              12.63 |
+|           56 | Jacob Ramirez        | Female   | 23-25       |            50 |              37.38 |              12.63 |
+|           59 | Lisa Ingram          | Female   | 18-19       |            50 |              37.38 |              12.63 |
+|           61 | Brandon Parks        | Male     | 18-19       |            50 |              37.38 |              12.63 |
 
 
 ---
@@ -256,18 +256,18 @@ SELECT
 
 ### Query Execution Result:
 
-|   student_id | student_name       | gender   | attendance_tier   |   overall_attendance_pct |   composite_score | letter_grade   | dropout_risk   |
-|-------------:|:-------------------|:---------|:------------------|-------------------------:|------------------:|:---------------|:---------------|
-|          108 | Darrell Atkinson   | Female   | Satisfactory      |                    66.67 |             26.3  | F              | High Risk      |
-|           79 | Robert Coffey      | Female   | Critical          |                    11.11 |             27.43 | F              | High Risk      |
-|           88 | Mr. Gabriel Harper | Male     | Satisfactory      |                    61.11 |             28.47 | F              | High Risk      |
-|           95 | Kevin Jones        | Female   | Satisfactory      |                    77.78 |             31.4  | F              | High Risk      |
-|           44 | Carol Walls        | Male     | Critical          |                    38.89 |             31.73 | F              | High Risk      |
-|           64 | Amy Goodman        | Male     | Critical          |                    38.89 |             33.43 | F              | High Risk      |
-|           72 | Bryan Cook         | Female   | Irregular         |                    55.56 |             39.03 | F              | High Risk      |
-|           74 | Brian Murphy       | Female   | Critical          |                     0    |             39.5  | F              | High Risk      |
-|          178 | Kimberly Davidson  | Male     | Critical          |                    22.22 |             39.67 | F              | High Risk      |
-|           69 | David Browning     | Female   | Satisfactory      |                    72.22 |             40.53 | F              | High Risk      |
+|   student_id | student_name      | gender   | attendance_tier   |   overall_attendance_pct |   composite_score | letter_grade   | dropout_risk   |
+|-------------:|:------------------|:---------|:------------------|-------------------------:|------------------:|:---------------|:---------------|
+|          108 | Darrell Atkinson  | Female   | Satisfactory      |                    66.67 |             26.3  | F              | High Risk      |
+|           79 | Robert Coffey     | Female   | Critical          |                    11.11 |             27.43 | F              | High Risk      |
+|           88 | Gabriel Harper    | Male     | Satisfactory      |                    61.11 |             28.47 | F              | High Risk      |
+|           95 | Kevin Jones       | Female   | Satisfactory      |                    77.78 |             31.4  | F              | High Risk      |
+|           44 | Carol Walls       | Male     | Critical          |                    38.89 |             31.73 | F              | High Risk      |
+|           64 | Amy Goodman       | Male     | Critical          |                    38.89 |             33.43 | F              | High Risk      |
+|           72 | Bryan Cook        | Female   | Irregular         |                    55.56 |             39.03 | F              | High Risk      |
+|           74 | Brian Murphy      | Female   | Critical          |                     0    |             39.5  | F              | High Risk      |
+|          178 | Kimberly Davidson | Male     | Critical          |                    22.22 |             39.67 | F              | High Risk      |
+|           69 | David Browning    | Female   | Satisfactory      |                    72.22 |             40.53 | F              | High Risk      |
 
 
 ---
@@ -308,7 +308,7 @@ WITH RankedStudents AS (
 |---------------:|-------------:|:------------------|:---------|:------------|------------------:|:---------------|
 |              1 |          250 | Angela Rodriguez  | Female   | 23-25       |            100    | A              |
 |              2 |          280 | Karen Frost       | Female   | 23-25       |             96.27 | A              |
-|              3 |           71 | Dr. Susan James   | Male     | 20-22       |             95.93 | A              |
+|              3 |           71 | Susan James       | Male     | 20-22       |             95.93 | A              |
 |              4 |          187 | Paul Smith        | Female   | 23-25       |             94.67 | A              |
 |              5 |          195 | Douglas Cruz      | Female   | 20-22       |             93.63 | A              |
 |              6 |          148 | Amy George        | Female   | 20-22       |             93.53 | A              |
