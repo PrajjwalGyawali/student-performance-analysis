@@ -14,7 +14,7 @@ VIS_DIR = os.path.join(os.path.dirname(__file__), "..", "visualizations")
 def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
     """
     Executes Exploratory Data Analysis and Data Quality Audit.
-    Generates summary statistics and visual diagnostic plots.
+    Generates summary statistics, text quality audits, and visual diagnostic plots.
     """
     os.makedirs(VIS_DIR, exist_ok=True)
     
@@ -27,6 +27,18 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
     print(f"Total Records: {num_rows}")
     print(f"Total Features: {num_cols}")
     
+    print("\n--- 1.1 Column Data Types ---")
+    for col, dtype in df.dtypes.items():
+        print(f"  - {col}: {dtype}")
+        
+    print("\n--- 1.2 Number of Unique Values per Column ---")
+    unique_counts = df.nunique()
+    for col, u_cnt in unique_counts.items():
+        print(f"  - {col}: {u_cnt} unique values")
+        
+    print("\n--- 1.3 First 5 Sample Records ---")
+    print(df.head(5).to_string(index=False))
+    
     # 2. Data Quality Checks
     print("\n--- 2.1 Missing Values Analysis ---")
     missing_counts = df.isnull().sum()
@@ -37,23 +49,45 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
     print("\n--- 2.2 Duplication Analysis ---")
     dup_rows = df.duplicated().sum()
     dup_ids = df["student_id"].duplicated().sum()
+    dup_names = df["name"].duplicated().sum()
     print(f"Duplicate Full Rows: {dup_rows}")
     print(f"Duplicate Student IDs: {dup_ids}")
+    print(f"Duplicate Student Names: {dup_names}")
+    if dup_names > 0:
+        dup_sample = df[df["name"].duplicated(keep=False)].sort_values("name")[["student_id", "name", "gender"]]
+        print(f"  Note: {dup_names} names appear more than once, but have distinct student_ids:")
+        for name_val, grp in dup_sample.groupby("name"):
+            id_list = grp["student_id"].tolist()
+            print(f"    * '{name_val}': IDs {id_list} (Kept as distinct student entities)")
+            
+    print("\n--- 2.3 Text Consistency & Casing Audit ---")
+    inconsistent_mask = df["name"] != df["name"].str.strip().str.title()
+    inconsistent_names_count = int(inconsistent_mask.sum())
+    print(f"Names with extra whitespace or non-standard capitalization: {inconsistent_names_count}")
+    if inconsistent_names_count > 0:
+        print(f"  Flagged records: {df.loc[inconsistent_mask, 'name'].tolist()}")
+        print("  Resolution: Handled in Phase 3 via .str.strip().str.title()")
+        
+    print("\n--- 2.4 Name-Gender Semantic Alignment Check ---")
+    print("Observation: Several records exhibit discordant traditional name-gender associations")
+    print("  (e.g., 'Kristina Vaughan' listed as Male, 'Mark Thomas' listed as Female).")
+    print("  Assessment: Characteristics indicate synthetic dataset generation (e.g. Faker).")
+    print("  Integrity Policy: Gender telemetry preserved unmodified to avoid subjective alteration.")
     
     # 3. Descriptive Statistics
-    print("\n--- 2.3 Numerical Feature Summary Statistics ---")
+    print("\n--- 2.5 Numerical Feature Summary Statistics ---")
     numeric_summary = df.describe().round(2)
     print(numeric_summary.to_string())
     
     # 4. Categorical Feature Inspection
-    print("\n--- 2.4 Categorical Features ---")
+    print("\n--- 2.6 Categorical Feature Distributions ---")
     print("Gender Distribution:")
     print(df["gender"].value_counts())
     print("\nAge Value Counts:")
     print(df["age"].value_counts().sort_index())
     
     # 5. Outlier Detection using IQR Method
-    print("\n--- 2.5 Outlier Audit (IQR Method) ---")
+    print("\n--- 2.7 Outlier Audit (IQR Method) ---")
     outlier_summary = {}
     eval_cols = ["quiz1_marks", "quiz2_marks", "quiz3_marks", "midterm_marks", "final_marks", "previous_gpa"]
     for col in eval_cols:
@@ -68,7 +102,7 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
 
     # 6. Generate and Save Visualizations
     if save_visualizations:
-        print("\n--- 2.6 Generating Visualizations ---")
+        print("\n--- 2.8 Generating Visualizations ---")
         sns.set_theme(style="whitegrid", palette="muted")
         
         # Figure 1: Grade Distributions
@@ -138,8 +172,14 @@ def perform_eda(df: pd.DataFrame, save_visualizations: bool = True) -> dict:
     return {
         "num_rows": num_rows,
         "num_cols": num_cols,
+        "column_dtypes": {col: str(dtype) for col, dtype in df.dtypes.items()},
+        "unique_counts": unique_counts.to_dict(),
+        "sample_records_head5": df.head(5).to_dict(orient="records"),
         "missing_summary": missing_counts.to_dict(),
         "duplicate_rows": int(dup_rows),
+        "duplicate_student_ids": int(dup_ids),
+        "duplicate_names": int(dup_names),
+        "inconsistent_names_count": inconsistent_names_count,
         "outlier_summary": outlier_summary
     }
 

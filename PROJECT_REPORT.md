@@ -34,13 +34,19 @@ The extraction logic was implemented in [`src/extract.py`](src/extract.py), veri
 
 ## 3. Exploratory Data Analysis & Data Quality Audit (Phase 2)
 
-EDA was executed through [`src/eda.py`](src/eda.py) to audit distributions and data quality issues:
+EDA was executed through [`src/eda.py`](src/eda.py) to audit distributions, schema structures, and data quality issues:
 
 ### 3.1 Data Quality Findings
 1. **Pervasive Missing Values:** `assignments_submitted` contained 300 missing (NaN) values (100% missing data in the raw extraction), representing a classic real-world incomplete sensor/telemetry collection failure.
-2. **Duplicate Records:** 0 duplicate rows and 0 duplicate `student_id` entries were observed.
-3. **Outlier Boundaries:** Using the Interquartile Range (IQR) method ($Q_1 - 1.5 \times \text{IQR}$ to $Q_3 + 1.5 \times \text{IQR}$), 3 lower-bound outliers were flagged in `final_marks` (students with 0 exam marks) and 2 lower-bound outliers in `previous_gpa` ($< 0.84$). These represent genuine academic failure cases rather than data collection errors.
-4. **Demographic Balance:** Balanced cohort comprising 155 Female (51.7%) and 145 Male (48.3%) students aged 18 to 25 (mean age 21.55).
+2. **Duplication Audit:**
+   * **Full Rows:** Exactly **0 duplicate full rows**.
+   * **Primary Key:** Exactly **0 duplicate `student_id` records**.
+   * **Duplicate Names:** Exactly **3 names appear more than once** in the raw data (e.g., `"Michael Davis"` with IDs 38 and 176, `"Amanda Perez"` with IDs 238 and 288, `"Mark Thomas"` with IDs 83 and 150). Because they possess distinct `student_id`s, they represent distinct individual students and were properly retained.
+3. **Text Formatting & Casing Consistency:** An audit comparing raw names against `.str.strip().str.title()` identified **4 names with casing or whitespace irregularities** (e.g., `'Brandon Parks II'`, `'Amy Patterson MD'`, `'Dr. Jake Cortez MD'`, `'Sonya Young DDS'`). These are cleaned in `transform.py` using `.str.strip().str.title()`.
+4. **Name-Gender Semantic Alignment:** Several records exhibit discordant traditional name-gender associations (e.g., `"Kristina Vaughan"` listed as Male, `"Mark Thomas"` listed as Female, `"Amanda Perez"` listed as Male). These patterns are consistent with synthetic dataset generators (e.g., Faker); gender values were preserved unmodified to prevent subjective data tampering.
+5. **Structural & Cardinality Checks:** Automated checks verify data types across all 16 attributes, calculate cardinality (e.g., 8 unique ages, 2 genders, 300 distinct IDs, 173 unique final exam scores), and preview the first 5 records to validate structural consistency before transformation.
+6. **Outlier Boundaries:** Using the Interquartile Range (IQR) method ($Q_1 - 1.5 \times \text{IQR}$ to $Q_3 + 1.5 \times \text{IQR}$), 3 lower-bound outliers were flagged in `final_marks` (students with 0 exam marks) and 2 lower-bound outliers in `previous_gpa` ($< 0.84$). These represent genuine academic failure cases rather than data collection errors.
+7. **Demographic Balance:** Balanced cohort comprising 155 Female (51.7%) and 145 Male (48.3%) students aged 18 to 25 (mean age 21.55).
 
 ### 3.2 Visual Explorations
 * [`visualizations/01_grade_distributions.png`](visualizations/01_grade_distributions.png): Visualized distributions for midterm (mean 19.97/30) and final marks (mean 37.38/50).
@@ -54,7 +60,7 @@ EDA was executed through [`src/eda.py`](src/eda.py) to audit distributions and d
 Implemented in [`src/transform.py`](src/transform.py):
 
 ### 4.1 Cleaning Operations & Rationales
-1. **String Standardization:** Standardized `name` (Title Case) and `gender` (Capitalized, whitespace stripped).
+1. **String Standardization:** Standardized `name` (Title Case, stripped whitespace) and `gender` (Capitalized, whitespace stripped).
 2. **Entity Attribute Decomposition:** Split `name` into `first_name` and `last_name` for granular attribute decomposition, structured sorting, indexing, and standardized reporting.
 3. **Handling Missing Values & Feature Elimination (Methodological Integrity):** In the raw dataset, `assignments_submitted` had 300 missing values (100% null). Rather than fabricating data through synthetic imputation—which would invent unobserved student behaviors—we made the principled engineering decision to drop `assignments_submitted` along with the redundant constant `total_assignments` (5 for all rows). This preserves analytical honesty and statistical validity while fulfilling the project requirement for handling missing data.
 
